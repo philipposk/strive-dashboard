@@ -66,6 +66,13 @@
 
   <div class="grid" id="countries"></div>
 
+  <div class="panel" id="ingestPanel" style="display:none; margin-bottom:16px">
+    <h3>🇸🇪 SE financials ingest <span id="ixRun" class="mut" style="text-transform:none;letter-spacing:0"></span></h3>
+    <div style="font-size:15px;margin:0 0 10px"><b id="ixRows" style="color:var(--accent)">—</b> companies parsed · <span id="ixRev" class="mut">—</span> with revenue</div>
+    <div class="bar" style="margin:10px 0;max-width:none"><div id="ixBar"></div></div>
+    <div class="mut" style="font-size:12px"><span id="ixFiles">—</span> annual-report files processed · these flow onto SE companies as workers re-sweep</div>
+  </div>
+
   <div class="charts">
     <div class="panel"><h3>Total companies over time</h3><canvas id="cTotal" height="190"></canvas></div>
     <div class="panel"><h3>Per-country counts</h3><canvas id="cCountry" height="190"></canvas></div>
@@ -134,6 +141,19 @@ async function load(){
       </div>
     </div>`;
   }).join('');
+
+  // SE iXBRL financials ingest progress
+  const ing = s.ingest;
+  const ip = document.getElementById('ingestPanel');
+  if (ing && (ing.rows || ing.filesTotal)) {
+    ip.style.display = 'block';
+    document.getElementById('ixRows').textContent = fmtN(ing.rows);
+    document.getElementById('ixRev').textContent = fmtN(ing.withRevenue);
+    const pct = ing.filesTotal ? Math.round(ing.filesDone * 100 / ing.filesTotal) : 0;
+    document.getElementById('ixBar').style.width = pct + '%';
+    document.getElementById('ixFiles').textContent = `${fmtN(ing.filesDone)} / ${fmtN(ing.filesTotal)} (${pct}%)`;
+    document.getElementById('ixRun').textContent = ing.running ? '· ⏳ ingesting' : '· idle';
+  } else { ip.style.display = 'none'; }
 
   // History-driven charts
   const hist = (await getJSON('history.json')) || [];
