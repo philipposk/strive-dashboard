@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strive miner — live progress</title>
+<meta name="description" content="Live Nordic company-mining progress: Denmark, Norway, Sweden registry + financial enrichment coverage.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<style>
+  :root { --bg:#0b0e14; --card:#141925; --line:#222a3a; --txt:#e6edf3; --mut:#8b97a8; --accent:#4dd4ac; --accent2:#3aa6ff; --warn:#f2b441; --bad:#f2746b; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:28px 20px 60px; }
+  header { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; }
+  h1 { font-size:18px; font-weight:600; margin:0; }
+  a { color:var(--accent); text-decoration:none; }
+  .mut { color:var(--mut); }
+  .hero { text-align:center; margin:34px 0 10px; }
+  .big { font-size:clamp(48px,11vw,120px); font-weight:800; line-height:1; letter-spacing:-2px; }
+  .big .g { background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .sub { font-size:clamp(15px,3vw,20px); margin-top:12px; color:var(--mut); }
+  .sub b { color:var(--accent); }
+  .pill { display:inline-block; padding:2px 10px; border-radius:20px; font-size:13px; font-weight:600; border:1px solid var(--line); }
+  .pill.ok { color:var(--accent); } .pill.warn { color:var(--warn); } .pill.bad { color:var(--bad); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; margin:26px 0; }
+  .cc { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .cc .flag { font-size:15px; font-weight:700; letter-spacing:.3px; }
+  .cc .count { font-size:30px; font-weight:800; margin:4px 0 2px; }
+  .cc .count .d { font-size:14px; font-weight:600; color:var(--accent); }
+  .cov { margin-top:12px; }
+  .cov .row { display:flex; align-items:center; gap:8px; margin:7px 0; font-size:12px; }
+  .cov .lab { flex:0 0 78px; color:var(--mut); }
+  .cov .track { flex:1; height:8px; background:#1d2433; border-radius:6px; overflow:hidden; }
+  .cov .track > div { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0; transition:width .6s; }
+  .cov .vv { flex:0 0 38px; text-align:right; color:var(--txt); font-weight:600; }
+  .charts { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .panel h3 { margin:0 0 10px; font-size:13px; font-weight:600; color:var(--mut); text-transform:uppercase; letter-spacing:.5px; }
+  @media(max-width:720px){ .charts{ grid-template-columns:1fr; } }
+  .workers { display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 2px; }
+  .wk { display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:13px; }
+  .wk .dot { width:9px; height:9px; border-radius:50%; }
+  .tl ul { list-style:none; padding:0; margin:0; }
+  .tl li { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .tl li:last-child { border-bottom:0; }
+  .tl .dot { flex:0 0 10px; width:10px; height:10px; border-radius:50%; margin-top:5px; }
+  .tl .when { flex:0 0 104px; color:var(--mut); font-size:13px; }
+  .tl .ti { font-weight:600; } .tl .de { color:var(--mut); font-size:13px; }
+  footer { margin-top:36px; color:var(--mut); font-size:13px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>⛏ <span id="name">Strive miner</span> — live progress</h1>
+    <div class="mut">updated <span id="updated">—</span> · workers <span id="alive">—</span></div>
+  </header>
+
+  <div class="hero">
+    <div class="big"><span id="total" class="g">—</span></div>
+    <div class="sub">companies mined · <b id="dDay">—</b> today · <span id="status" class="pill ok">—</span></div>
+  </div>
+
+  <div class="workers" id="workers"></div>
+
+  <div class="grid" id="countries"></div>
+
+  <div class="charts">
+    <div class="panel"><h3>Total companies over time</h3><canvas id="cTotal" height="190"></canvas></div>
+    <div class="panel"><h3>Per-country counts</h3><canvas id="cCountry" height="190"></canvas></div>
+    <div class="panel"><h3>Growth per day</h3><canvas id="cGrowth" height="190"></canvas></div>
+    <div class="panel"><h3>Enrichment coverage %</h3><canvas id="cCov" height="190"></canvas></div>
+  </div>
+
+  <div class="panel tl"><h3>Timeline — what happened</h3><ul id="timeline"></ul></div>
+
+  <footer>auto-refreshes every 60s · Nordic company registries (DK Virk · NO BRREG · SE Bolagsverket/SCB)</footer>
+</div>
+
+<script>
+// Data is served from GitHub raw so the miner only has to `git push` a JSON
+// file to update the dashboard — no redeploy. Cache-busted each fetch.
+const DATA = "https://raw.githubusercontent.com/philipposk/strive-dashboard/main/data";
+const FLAG = { DK:"🇩🇰 DK", NO:"🇳🇴 NO", SE:"🇸🇪 SE" };
+const TYPE_COLOR = { restart:'#f2b441', down:'#f2746b', milestone:'#4dd4ac', start:'#3aa6ff', note:'#8b97a8' };
+const COUNTRY_COLOR = { DK:'#f2746b', NO:'#3aa6ff', SE:'#4dd4ac' };
+const charts = {};
+const fmtFull = (t) => new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+const fmtN = (n) => (n==null?'—':Number(n).toLocaleString());
+const delta = (n) => n>0 ? `<span class="d">+${fmtN(n)}</span>` : '';
+const xAxis = { type:'time', time:{ displayFormats:{ hour:'HH:mm', day:'dd MMM' } }, ticks:{ color:'#8b97a8', maxTicksLimit:7 }, grid:{ color:'#1d2433' } };
+const yAxis = { ticks:{ color:'#8b97a8' }, grid:{ color:'#1d2433' }, beginAtZero:true };
+
+function lineChart(id, color){
+  return new Chart(document.getElementById(id), {
+    type:'line',
+    data:{ datasets:[{ data:[], borderColor:color, backgroundColor:color+'22', fill:true, tension:.25, pointRadius:0, borderWidth:2 }] },
+    options:{ maintainAspectRatio:true, scales:{ x:xAxis, y:yAxis }, plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{ title:(it)=>fmtFull(it[0].parsed.x) } } } }
+  });
+}
+
+async function getJSON(f){ try { return await fetch(DATA+'/'+f+'?_='+Date.now()).then(r=>r.json()); } catch(e){ return null; } }
+
+async function load(){
+  const s = await getJSON('status.json');
+  if(!s){ return; }
+  document.getElementById('name').textContent = s.name || 'Strive miner';
+  document.getElementById('total').textContent = fmtN(s.total);
+  document.getElementById('dDay').textContent = fmtN(s.deltaToday||0);
+  document.getElementById('updated').textContent = fmtFull(s.updated);
+  document.getElementById('alive').textContent = s.alive || '—';
+  const st = document.getElementById('status');
+  st.textContent = s.statusLabel || 'running';
+  st.className = 'pill ' + (s.statusClass || 'ok');
+
+  // Worker chips
+  document.getElementById('workers').innerHTML = (s.workers||[]).map(w=>{
+    const col = w.state==='dead' ? '#f2746b' : (w.state==='resting' ? '#f2b441' : '#4dd4ac');
+    return `<div class="wk"><span class="dot" style="background:${col}"></span>${w.id} · ${w.label||w.state}</div>`;
+  }).join('');
+
+  // Country cards with coverage bars
+  document.getElementById('countries').innerHTML = (s.countries||[]).map(c=>{
+    const cov = (lab,v)=>`<div class="row"><span class="lab">${lab}</span><div class="track"><div style="width:${v||0}%"></div></div><span class="vv">${v==null?'—':v+'%'}</span></div>`;
+    return `<div class="cc">
+      <div class="flag">${FLAG[c.code]||c.code}</div>
+      <div class="count">${fmtN(c.count)} ${delta(c.delta||0)}</div>
+      <div class="cov">
+        ${cov('sector', c.nacePct)}
+        ${cov('financials', c.finPct)}
+        ${cov('employees', c.empPct)}
+      </div>
+    </div>`;
+  }).join('');
+
+  // History-driven charts
+  const hist = (await getJSON('history.json')) || [];
+  if(!charts.total){ charts.total=lineChart('cTotal','#4dd4ac'); }
+  charts.total.data.datasets[0].data = hist.map(e=>({x:e.t,y:e.total}));
+  charts.total.update('none');
+
+  // Per-country stacked line → use latest snapshot bar
+  const cs = s.countries||[];
+  if(!charts.country){
+    charts.country = new Chart(document.getElementById('cCountry'),{ type:'bar',
+      data:{ labels:cs.map(c=>c.code), datasets:[{ data:cs.map(c=>c.count), backgroundColor:cs.map(c=>COUNTRY_COLOR[c.code]||'#4dd4ac') }] },
+      options:{ plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#8b97a8'},grid:{display:false}}, y:yAxis } } });
+  } else { charts.country.data.labels=cs.map(c=>c.code); charts.country.data.datasets[0].data=cs.map(c=>c.count); charts.country.update('none'); }
+
+  // Growth per day (diff of daily totals from history)
+  const byDay = {};
+  hist.forEach(e=>{ const d=new Date(e.t); const k=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()); byDay[k]=e.total; });
+  const days = Object.keys(byDay).map(Number).sort((a,b)=>a-b);
+  const growth = days.map((k,i)=> i===0 ? {x:k,y:0} : {x:k,y:Math.max(0, byDay[k]-byDay[days[i-1]])});
+  if(!charts.growth){
+    charts.growth = new Chart(document.getElementById('cGrowth'),{ type:'bar',
+      data:{ datasets:[{ data:growth, backgroundColor:'#3aa6ff' }] },
+      options:{ plugins:{legend:{display:false}}, scales:{ x:xAxis, y:yAxis } } });
+  } else { charts.growth.data.datasets[0].data=growth; charts.growth.update('none'); }
+
+  // Coverage grouped bars
+  if(!charts.cov){
+    charts.cov = new Chart(document.getElementById('cCov'),{ type:'bar',
+      data:{ labels:cs.map(c=>c.code), datasets:[
+        {label:'sector', data:cs.map(c=>c.nacePct), backgroundColor:'#4dd4ac'},
+        {label:'financials', data:cs.map(c=>c.finPct), backgroundColor:'#3aa6ff'},
+        {label:'employees', data:cs.map(c=>c.empPct), backgroundColor:'#f2b441'} ] },
+      options:{ plugins:{legend:{labels:{color:'#8b97a8',boxWidth:12}}}, scales:{ x:{ticks:{color:'#8b97a8'},grid:{display:false}}, y:{...yAxis,max:100} } } });
+  } else {
+    charts.cov.data.labels=cs.map(c=>c.code);
+    charts.cov.data.datasets[0].data=cs.map(c=>c.nacePct);
+    charts.cov.data.datasets[1].data=cs.map(c=>c.finPct);
+    charts.cov.data.datasets[2].data=cs.map(c=>c.empPct);
+    charts.cov.update('none');
+  }
+
+  // Timeline
+  const events = (await getJSON('events.json')) || [];
+  document.getElementById('timeline').innerHTML = events.slice().sort((a,b)=>b.t-a.t).slice(0,40).map(e=>{
+    const title = e.title ? `<span class="ti">${e.title}</span><br>` : '';
+    return `<li><span class="dot" style="background:${TYPE_COLOR[e.type]||'#8b97a8'}"></span>
+      <span class="when">${fmtFull(e.t)}</span><span>${title}<span class="de">${e.detail||''}</span></span></li>`;
+  }).join('') || '<li class="mut">no events yet</li>';
+}
+load(); setInterval(load, 60000);
+</script>
+</body>
+</html>
