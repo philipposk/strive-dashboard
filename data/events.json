@@ -1,1 +1,9 @@
-[{"t":1780000000000,"type":"start","title":"Dashboard live","detail":"Strive miner status now publishing to 2.6x7.gr"},{"t":1780783140000,"type":"milestone","title":"Daily harvest Jun 6: +245","detail":"🇳🇴 +245 NO · 🇩🇰 +0 DK · 🇸🇪 +0 SE — total reached 102,575"}]
+[
+{"t":1780000000000,"type":"start","title":"Dashboard live","detail":"Strive miner status now publishing to 2.6x7.gr"},
+{"t":1780783140000,"type":"milestone","title":"Daily harvest Jun 6: +245","detail":"🇳🇴 +245 NO · 🇩🇰 +0 DK · 🇸🇪 +0 SE — total reached 102,575"},
+{"t":1780788346000,"type":"start","title":"🇸🇪 SE financials ingest started","detail":"Parsing Bolagsverket's free annual-report archive (iXBRL) — the SE equivalent of Denmark's Virk feed. No login, no Swedish ID."},
+{"t":1780788946000,"type":"milestone","title":"🇸🇪 38,097 SE companies got financials","detail":"First pass: single-year revenue / gross profit / pre-tax profit attached. Visible on company pages; not yet enough to pass the live gate (needs growth)."},
+{"t":1780789546000,"type":"note","title":"Upgraded parser → 2-year data","detail":"Re-ingest to capture each report's prior-year column, so year-over-year growth can be computed — the missing piece the live eligibility gate requires."},
+{"t":1780805925000,"type":"milestone","title":"🇸🇪 SE ingest complete: 437,966 reports","detail":"Whole 2024+2025 archive parsed. 401,312 carry prior-year figures → growth is computable for nearly every established company."},
+{"t":1780808746000,"type":"milestone","title":"🇸🇪 43,291 SE companies now have growth","detail":"Year-over-year growth backfilled into the platform. SE companies that clear the gross-profit + growth bar now start appearing on the live site for the first time."}
+]
