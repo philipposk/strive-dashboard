@@ -58,5 +58,11 @@
     "type": "milestone",
     "title": "Daily harvest Jun 9: +0",
     "detail": "no new companies — reached 102649"
+  },
+  {
+    "t": 1781095173000,
+    "type": "milestone",
+    "title": "🇸🇪 192 SE companies went live",
+    "detail": "First Swedish companies to clear the eligibility gate (gross profit 5–100M SEK + ≥5% growth + profit). 41,493 SE now carry growth data; more qualify as coverage fills."
   }
 ]
