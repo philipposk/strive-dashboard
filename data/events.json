@@ -76,5 +76,11 @@
     "type": "milestone",
     "title": "Daily harvest Jun 11: +158",
     "detail": "🇳🇴 +158 NO — reached 102807"
+  },
+  {
+    "t": 1781216764000,
+    "type": "milestone",
+    "title": "🇸🇪🇳🇴 SE + NO went live — list 7.7k → 10.5k",
+    "detail": "Per-country eligibility gate shipped: SE floor lowered to 1M SEK, NO growth requirement waived (free BRREG = single year). 1,708 SE + 247 NO companies now on the live site alongside 8k DK."
   }
 ]
