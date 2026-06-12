@@ -1,8 +1,8 @@
 {
   "name": "Strive miner",
-  "updated": 1781271194000,
-  "total": 113110,
-  "deltaToday": 10303,
+  "updated": 1781271804000,
+  "total": 113113,
+  "deltaToday": 10306,
   "alive": "4/4",
   "statusLabel": "mining",
   "statusClass": "ok",
@@ -10,22 +10,22 @@
     {
       "id": "NO_LOOP_A",
       "state": "resting",
-      "label": "resting (35m)"
+      "label": "resting (45m)"
     },
     {
       "id": "NO_LOOP_B",
-      "state": "resting",
-      "label": "resting (32m)"
+      "state": "working",
+      "label": "working (9m)"
     },
     {
       "id": "SE_LOOP_NEW",
-      "state": "resting",
-      "label": "resting (51m)"
+      "state": "working",
+      "label": "working (0m)"
     },
     {
       "id": "SE_LOOP_OLD",
       "state": "working",
-      "label": "working (0m)"
+      "label": "working (9m)"
     }
   ],
   "ingest": {
@@ -46,19 +46,19 @@
     },
     {
       "code": "NO",
-      "count": 12467,
+      "count": 12470,
       "nacePct": 100,
       "finPct": 100,
       "empPct": 74,
-      "delta": 0
+      "delta": 3
     },
     {
       "code": "SE",
-      "count": 91837,
+      "count": 91768,
       "nacePct": 96,
       "finPct": 55,
       "empPct": 0,
-      "delta": -78
+      "delta": -69
     }
   ]
 }
