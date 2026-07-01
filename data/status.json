@@ -1,8 +1,8 @@
 {
   "name": "Strive miner",
-  "updated": 1782871579000,
-  "total": 8728,
-  "deltaToday": 0,
+  "updated": 1782872346000,
+  "total": 113168,
+  "deltaToday": 104440,
   "alive": "0/4",
   "statusLabel": "all idle",
   "statusClass": "warn",
@@ -46,19 +46,19 @@
     },
     {
       "code": "NO",
-      "count": 0,
-      "nacePct": 0,
-      "finPct": 0,
-      "empPct": 0,
-      "delta": 0
+      "count": 12525,
+      "nacePct": 100,
+      "finPct": 100,
+      "empPct": 74,
+      "delta": 12525
     },
     {
       "code": "SE",
-      "count": 0,
-      "nacePct": 0,
-      "finPct": 0,
+      "count": 91915,
+      "nacePct": 96,
+      "finPct": 55,
       "empPct": 0,
-      "delta": 0
+      "delta": 91915
     }
   ]
 }
